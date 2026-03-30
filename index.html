@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARFlow — The AR Integration Layer</title>
+  <meta name="description" content="Add AR to any app in minutes. One API. Every platform. Like Stripe, but for augmented reality." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --surface: #16161f;
+      --border: #2a2a3a;
+      --accent: #7c6af7;
+      --accent2: #a78bfa;
+      --text: #f0f0ff;
+      --muted: #8888a8;
+      --green: #4ade80;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+    nav .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    nav .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    nav .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 40px 80px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124, 106, 247, 0.12);
+      border: 1px solid rgba(124, 106, 247, 0.3);
+      color: var(--accent2);
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, #a78bfa, #7c6af7, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+    }
+
+    /* CODE SNIPPET */
+    .code-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      text-align: left;
+      max-width: 560px;
+      margin: 0 auto 44px;
+      font-family: 'Menlo', 'Monaco', 'Fira Code', monospace;
+      font-size: 0.85rem;
+    }
+    .code-hero .comment { color: #6b7280; }
+    .code-hero .keyword { color: #a78bfa; }
+    .code-hero .string { color: #86efac; }
+    .code-hero .method { color: #60a5fa; }
+    .code-line { line-height: 1.8; }
+
+    /* CTA */
+    .cta-group {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(124, 106, 247, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(124, 106, 247, 0.45);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover { background: var(--surface); border-color: var(--accent); }
+
+    /* LOGOS */
+    .social-proof {
+      text-align: center;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border);
+    }
+    .social-proof p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+    .logo-row {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo-pill {
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      opacity: 0.5;
+    }
+
+    /* FEATURES */
+    .features {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+    .section-label {
+      text-align: center;
+      color: var(--accent2);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 60px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* PRICING */
+    .pricing {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .plan {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .plan.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(124,106,247,0.08), var(--surface));
+      position: relative;
+    }
+    .plan-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .plan-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .plan-price {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 4px;
+    }
+    .plan-price span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+    .plan-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+    .plan-features {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .plan-features li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .plan-features li.muted::before { color: var(--muted); content: '–'; }
+    .plan-features li.muted { color: var(--muted); }
+    .plan .btn-primary { width: 100%; text-align: center; display: block; }
+    .plan .btn-secondary { width: 100%; text-align: center; display: block; }
+
+    /* WAITLIST */
+    .waitlist {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+      text-align: center;
+    }
+    .waitlist h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+    .waitlist p {
+      color: var(--muted);
+      margin-bottom: 36px;
+      font-size: 1rem;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 10px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .waitlist-form input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-form input:focus { border-color: var(--accent); }
+    .waitlist-form input::placeholder { color: var(--muted); }
+    .waitlist-form button {
+      white-space: nowrap;
+    }
+    .waitlist-note {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 14px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      nav .nav-links { display: none; }
+      .hero { padding: 60px 20px 60px; }
+      .features, .pricing, .waitlist { padding-left: 20px; padding-right: 20px; }
+      .waitlist-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">AR<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#docs">Docs</a></li>
+  </ul>
+  <a href="#waitlist" class="nav-cta">Get early access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <div class="badge-dot"></div>
+    Now in private beta
+  </div>
+  <h1>The AR integration layer<br/>for <span class="gradient">every platform</span></h1>
+  <p>Add augmented reality to any app in minutes. One clean API, every device, zero 3D expertise required. Think Stripe — but for AR.</p>
+
+  <div class="code-hero">
+    <div class="code-line"><span class="comment">// Add AR object placement in 3 lines</span></div>
+    <div class="code-line"><span class="keyword">import</span> ARFlow from <span class="string">'@arflow/sdk'</span></div>
+    <div class="code-line">&nbsp;</div>
+    <div class="code-line"><span class="keyword">const</span> ar = ARFlow.<span class="method">init</span>(<span class="string">'pk_live_...'</span>)</div>
+    <div class="code-line">ar.<span class="method">place</span>({ model: <span class="string">'chair.glb'</span>, anchor: <span class="string">'surface'</span> })</div>
+  </div>
+
+  <div class="cta-group">
+    <a href="#waitlist" class="btn-primary">Start for free →</a>
+    <a href="#features" class="btn-secondary">See how it works</a>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="social-proof">
+  <p>Trusted by teams building on</p>
+  <div class="logo-row">
+    <div class="logo-pill">ARKit</div>
+    <div class="logo-pill">ARCore</div>
+    <div class="logo-pill">WebXR</div>
+    <div class="logo-pill">Unity</div>
+    <div class="logo-pill">Android XR</div>
+    <div class="logo-pill">Snap Lenses</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Why ARFlow</div>
+  <h2 class="section-title">AR without the headache</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>One API, every platform</h3>
+      <p>Write once, deploy to iOS, Android, Web, and upcoming headsets. ARFlow abstracts the fragmented AR ecosystem into a single clean interface.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔌</div>
+      <h3>Drop-in SDK</h3>
+      <p>npm install and you're live in minutes. No 3D expertise, no platform-specific quirks, no cryptic sensor APIs. Just call ar.place() and it works.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">☁️</div>
+      <h3>Cloud anchors & sync</h3>
+      <p>Share AR experiences between users in real time. Objects persist across sessions. Multiple users see the same AR content, perfectly aligned.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Analytics built in</h3>
+      <p>See exactly how users interact with your AR content — dwell time, placement heat maps, drop-off points. Data you actually need.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Enterprise-grade security</h3>
+      <p>SOC 2 ready. All spatial data encrypted in transit and at rest. GDPR compliant. Your users' environments stay private.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3>AI-powered placement</h3>
+      <p>Our on-device AI finds the perfect surface, understands context, and places objects naturally — no manual anchoring needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple, transparent pricing</h2>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">€0 <span>/ month</span></div>
+      <div class="plan-desc">Perfect for prototypes and side projects</div>
+      <ul class="plan-features">
+        <li>1,000 AR sessions / month</li>
+        <li>iOS + Android</li>
+        <li>Basic object placement</li>
+        <li>Community support</li>
+        <li class="muted">Cloud anchors</li>
+        <li class="muted">Analytics dashboard</li>
+        <li class="muted">Custom domains</li>
+      </ul>
+      <a href="#waitlist" class="btn-secondary">Get started</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">Most popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">€49 <span>/ month</span></div>
+      <div class="plan-desc">For teams shipping real products</div>
+      <ul class="plan-features">
+        <li>50,000 AR sessions / month</li>
+        <li>iOS + Android + WebXR</li>
+        <li>Cloud anchors & sync</li>
+        <li>Analytics dashboard</li>
+        <li>AI placement engine</li>
+        <li>Email support</li>
+        <li class="muted">Custom domains</li>
+      </ul>
+      <a href="#waitlist" class="btn-primary">Start free trial →</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">Custom</div>
+      <div class="plan-desc">For scale and compliance requirements</div>
+      <ul class="plan-features">
+        <li>Unlimited AR sessions</li>
+        <li>All platforms + headsets</li>
+        <li>SLA & dedicated support</li>
+        <li>Custom integrations</li>
+        <li>SOC 2 / GDPR compliance</li>
+        <li>On-prem option</li>
+        <li>Tailored onboarding</li>
+      </ul>
+      <a href="mailto:hello@arflow.dev" class="btn-secondary">Contact us</a>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist" id="waitlist">
+  <h2>Get early access</h2>
+  <p>We're onboarding teams in batches. Join the waitlist and we'll reach out within 48 hours.</p>
+  <form class="waitlist-form" onsubmit="handleSubmit(event)">
+    <input type="email" placeholder="your@email.com" required />
+    <button type="submit" class="btn-primary">Join waitlist</button>
+  </form>
+  <p class="waitlist-note">No spam. No credit card. Just an invite when your spot opens.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 ARFlow. Built in Amsterdam 🇳🇱</p>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  const input = e.target.querySelector('input');
+  btn.textContent = '✓ You\'re on the list!';
+  btn.style.background = '#4ade80';
+  btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
+  input.disabled = true;
+  btn.disabled = true;
+}
+</script>
+</body>
+</html>
