@@ -562,11 +562,14 @@
 <section class="waitlist" id="waitlist">
   <h2>Get early access</h2>
   <p>We're onboarding teams in batches. Join the waitlist and we'll reach out within 48 hours.</p>
-  <form class="waitlist-form" onsubmit="handleSubmit(event)">
-    <input type="email" placeholder="your@email.com" required />
-    <button type="submit" class="btn-primary">Join waitlist</button>
+  <form class="waitlist-form" id="waitlist-form" onsubmit="handleSubmit(event)">
+    <input type="email" id="waitlist-email" placeholder="your@email.com" required />
+    <button type="submit" class="btn-primary" id="waitlist-btn">Join waitlist</button>
   </form>
-  <p class="waitlist-note">No spam. No credit card. Just an invite when your spot opens.</p>
+  <p class="waitlist-note" id="waitlist-note">No spam. No credit card. Just an invite when your spot opens.</p>
+  <p id="waitlist-count" style="margin-top:12px;font-size:0.9rem;color:var(--muted);display:none;">
+    🔥 <span id="count-number">—</span> developers already on the list
+  </p>
 </section>
 
 <!-- FOOTER -->
@@ -575,16 +578,65 @@
 </footer>
 
 <script>
-function handleSubmit(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const input = e.target.querySelector('input');
-  btn.textContent = '✓ You\'re on the list!';
-  btn.style.background = '#4ade80';
-  btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
-  input.disabled = true;
-  btn.disabled = true;
+const API_BASE = window.location.port === '4242'
+  ? `${window.location.protocol}//${window.location.hostname}:4242`
+  : '';
+
+// Load count on page load
+async function loadCount() {
+  try {
+    const res = await fetch(`${API_BASE}/count`);
+    const data = await res.json();
+    if (data.count > 0) {
+      document.getElementById('count-number').textContent = data.count;
+      document.getElementById('waitlist-count').style.display = 'block';
+    }
+  } catch (e) {
+    // Server not running — silent fail, form still works visually
+  }
 }
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('waitlist-btn');
+  const input = document.getElementById('waitlist-email');
+  const email = input.value.trim();
+
+  btn.textContent = 'Joining...';
+  btn.disabled = true;
+  input.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.alreadyJoined) {
+      btn.textContent = '✓ Already on the list!';
+    } else {
+      btn.textContent = '✓ You\'re on the list!';
+    }
+    btn.style.background = '#4ade80';
+    btn.style.color = '#0a0a0f';
+    btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
+
+    if (data.count > 0) {
+      document.getElementById('count-number').textContent = data.count;
+      document.getElementById('waitlist-count').style.display = 'block';
+    }
+  } catch (err) {
+    // Fallback to visual-only if server not available
+    btn.textContent = '✓ You\'re on the list!';
+    btn.style.background = '#4ade80';
+    btn.style.color = '#0a0a0f';
+    btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadCount);
 </script>
 </body>
 </html>
