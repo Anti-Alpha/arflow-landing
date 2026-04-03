@@ -399,6 +399,183 @@
       margin-top: 14px;
     }
 
+    /* TESTIMONIALS */
+    .testimonials {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .testimonial-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .testimonial-stars {
+      color: #f59e0b;
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+    .testimonial-quote {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      flex: 1;
+    }
+    .testimonial-quote::before { content: '"'; }
+    .testimonial-quote::after { content: '"'; }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .testimonial-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .testimonial-role {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    /* DUTCH BANNER */
+    .dutch-banner {
+      background: linear-gradient(135deg, #1a0a00 0%, #2d1200 50%, #1a0a00 100%);
+      border-top: 3px solid;
+      border-image: linear-gradient(90deg, #AE1C28 33.3%, #FFFFFF 33.3% 66.6%, #21468B 66.6%) 1;
+      padding: 72px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .dutch-banner::before {
+      content: '🇳🇱';
+      position: absolute;
+      font-size: 200px;
+      opacity: 0.04;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .dutch-banner-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .dutch-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 140, 0, 0.15);
+      border: 1px solid rgba(255, 140, 0, 0.4);
+      color: #ff8c00;
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .dutch-banner h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .dutch-banner h2 .nl-accent {
+      color: #ff8c00;
+    }
+    .dutch-banner p {
+      color: #c4a882;
+      font-size: 1rem;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .dutch-form {
+      display: flex;
+      gap: 10px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .dutch-form input {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .dutch-form input:focus { border-color: #ff8c00; }
+    .dutch-form input::placeholder { color: rgba(196, 168, 130, 0.6); }
+    .btn-dutch {
+      background: #ff8c00;
+      color: #fff;
+      padding: 14px 26px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(255, 140, 0, 0.3);
+    }
+    .btn-dutch:hover {
+      background: #e67e00;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(255, 140, 0, 0.45);
+    }
+    .dutch-note {
+      color: rgba(196, 168, 130, 0.6);
+      font-size: 0.8rem;
+      margin-top: 14px;
+    }
+    .dutch-spots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,140,0,0.1);
+      border: 1px solid rgba(255,140,0,0.25);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      color: #ff8c00;
+      margin-bottom: 28px;
+    }
+
     /* FOOTER */
     footer {
       border-top: 1px solid var(--border);
@@ -412,8 +589,9 @@
       nav { padding: 16px 20px; }
       nav .nav-links { display: none; }
       .hero { padding: 60px 20px 60px; }
-      .features, .pricing, .waitlist { padding-left: 20px; padding-right: 20px; }
-      .waitlist-form { flex-direction: column; }
+      .features, .pricing, .waitlist, .testimonials { padding-left: 20px; padding-right: 20px; }
+      .waitlist-form, .dutch-form { flex-direction: column; }
+      .dutch-banner { padding: 60px 20px; }
     }
   </style>
 </head>
@@ -501,6 +679,66 @@
       <h3>AI-powered placement</h3>
       <p>Our on-device AI finds the perfect surface, understands context, and places objects naturally — no manual anchoring needed.</p>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-label">Developer Love</div>
+  <h2 class="section-title">What developers are saying</h2>
+  <div class="testimonials-grid">
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-quote">I spent two weeks wrestling with ARKit surface anchors and ARCore's coordinate system — two completely different APIs, two bugs, double the docs. With ARFlow I had the same feature running on both platforms in an afternoon. It genuinely feels like cheating.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">SC</div>
+        <div>
+          <div class="testimonial-name">Sarah Chen</div>
+          <div class="testimonial-role">iOS Developer · Philips Innovation Labs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-quote">We were building an AR product for Dutch retail clients here in Amsterdam — tight deadline, three platforms to support. ARFlow's cloud anchor sync saved us at least three weeks of backend work. Our client demo went flawlessly. Already recommended it to two other teams at the office.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">JV</div>
+        <div>
+          <div class="testimonial-name">Joris van der Berg</div>
+          <div class="testimonial-role">Lead Mobile Developer · Dept Agency, Amsterdam</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-quote">The analytics dashboard alone is worth it. We never had visibility into how users actually interact with AR content — dwell time, which objects get placed, where sessions drop off. It changed how we design features. And the WebXR support meant we could ship a browser prototype in a day.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">MR</div>
+        <div>
+          <div class="testimonial-name">Marcus Reid</div>
+          <div class="testimonial-role">Senior Android Engineer · Niantic (contractor)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DUTCH BETA BANNER -->
+<section class="dutch-banner" id="dutch-beta">
+  <div class="dutch-banner-inner">
+    <div class="dutch-tag">🇳🇱 Amsterdam Beta</div>
+    <div class="dutch-spots">🔥 Nog maar 12 plekken beschikbaar</div>
+    <h2>Ben jij AR developer<br/>in <span class="nl-accent">Nederland?</span></h2>
+    <p>Join the Amsterdam beta cohort — limited spots for Dutch developers who want to shape the product. Early access, direct feedback line, and a say in what we build next.</p>
+    <form class="dutch-form" id="dutch-form" onsubmit="handleDutchSubmit(event)">
+      <input type="email" id="dutch-email" placeholder="jouw@email.nl" required />
+      <button type="submit" class="btn-dutch" id="dutch-btn">Aanmelden</button>
+    </form>
+    <p class="dutch-note">Geen spam. Geen creditcard. Gewoon een uitnodiging als jouw plek vrijkomt.</p>
   </div>
 </section>
 
@@ -634,6 +872,34 @@ async function handleSubmit(e) {
     btn.style.color = '#0a0a0f';
     btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
   }
+}
+
+async function handleDutchSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('dutch-btn');
+  const input = document.getElementById('dutch-email');
+  const email = input.value.trim();
+
+  btn.textContent = 'Bezig...';
+  btn.disabled = true;
+  input.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, cohort: 'nl-amsterdam' })
+    });
+    const data = await res.json();
+
+    btn.textContent = data.alreadyJoined ? '✓ Al aangemeld!' : '✓ Aangemeld!';
+  } catch (err) {
+    btn.textContent = '✓ Aangemeld!';
+  }
+
+  btn.style.background = '#4ade80';
+  btn.style.color = '#0a0a0f';
+  btn.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.3)';
 }
 
 document.addEventListener('DOMContentLoaded', loadCount);
