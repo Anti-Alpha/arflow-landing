@@ -1,0 +1,14 @@
+{
+  "emails": [
+    {"email": "demo1@example.com", "joinedAt": "2026-04-02T10:23:00Z", "cohort": "early"},
+    {"email": "demo2@example.com", "joinedAt": "2026-04-03T14:45:00Z", "cohort": "early"},
+    {"email": "demo3@example.com", "joinedAt": "2026-04-04T09:12:00Z", "cohort": "early"},
+    {"email": "demo4@example.com", "joinedAt": "2026-04-05T11:30:00Z", "cohort": "nl-amsterdam"},
+    {"email": "demo5@example.com", "joinedAt": "2026-04-06T16:00:00Z", "cohort": "nl-amsterdam"},
+    {"email": "demo6@example.com", "joinedAt": "2026-04-07T08:55:00Z", "cohort": "nl-amsterdam"},
+    {"email": "demo7@example.com", "joinedAt": "2026-04-08T12:20:00Z", "cohort": "nl-amsterdam"},
+    {"email": "demo8@example.com", "joinedAt": "2026-04-09T19:45:00Z", "cohort": "nl-amsterdam"},
+    {"email": "demo9@example.com", "joinedAt": "2026-04-10T07:10:00Z", "cohort": "nl-amsterdam"}
+  ],
+  "count": 9
+}

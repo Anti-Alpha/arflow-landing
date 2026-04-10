@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARFlow — Waitlist Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0f0;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7c6af7, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      font-size: 11px;
+      background: rgba(124, 106, 247, 0.15);
+      border: 1px solid rgba(124, 106, 247, 0.3);
+      color: #a78bfa;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: #7c6af7;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .chart-section {
+      margin-bottom: 40px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+      padding: 0 4px;
+    }
+
+    .bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar {
+      width: 100%;
+      background: linear-gradient(180deg, #7c6af7, #4f46e5);
+      border-radius: 4px 4px 0 0;
+      min-height: 2px;
+      transition: height 0.6s ease;
+    }
+
+    .bar-label {
+      font-size: 10px;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .bar-count {
+      font-size: 11px;
+      color: #a78bfa;
+      font-weight: 600;
+    }
+
+    .cohort-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .cohort-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .cohort-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .cohort-info {
+      flex: 1;
+    }
+
+    .cohort-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e0e0f0;
+    }
+
+    .cohort-count {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .cohort-pct {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .table-section {
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    td {
+      padding: 12px 12px;
+      font-size: 13px;
+      color: #ccc;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .cohort-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .pill-early {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .pill-nl-amsterdam {
+      background: rgba(124, 106, 247, 0.15);
+      color: #a78bfa;
+      border: 1px solid rgba(124, 106, 247, 0.25);
+    }
+
+    .email-display {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #e0e0f0;
+    }
+
+    .last-updated {
+      font-size: 12px;
+      color: #444;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .growth-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #34d399;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ARFlow Admin</div>
+  <div class="badge">Waitlist Dashboard</div>
+</div>
+
+<div class="stats-grid" id="stats-grid">
+  <!-- filled by JS -->
+</div>
+
+<div class="chart-section">
+  <div class="section-title">Signups by day</div>
+  <div class="chart-bars" id="chart-bars"><!-- filled by JS --></div>
+</div>
+
+<div class="cohort-grid" id="cohort-grid"><!-- filled by JS --></div>
+
+<div class="table-section">
+  <div class="section-title">Latest entries</div>
+  <table id="entries-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>Cohort</th>
+        <th>Joined</th>
+      </tr>
+    </thead>
+    <tbody id="entries-body"><!-- filled by JS --></tbody>
+  </table>
+</div>
+
+<div class="last-updated" id="last-updated"></div>
+
+<script>
+  // Load waitlist.json relative to this file
+  async function loadData() {
+    try {
+      const res = await fetch('./waitlist.json?t=' + Date.now());
+      return await res.json();
+    } catch(e) {
+      // Fallback demo data
+      return {
+        emails: [
+          {"email": "demo1@example.com", "joinedAt": "2026-04-02T10:23:00Z", "cohort": "early"},
+          {"email": "demo2@example.com", "joinedAt": "2026-04-03T14:45:00Z", "cohort": "early"},
+          {"email": "demo3@example.com", "joinedAt": "2026-04-04T09:12:00Z", "cohort": "early"},
+          {"email": "demo4@example.com", "joinedAt": "2026-04-05T11:30:00Z", "cohort": "nl-amsterdam"},
+          {"email": "demo5@example.com", "joinedAt": "2026-04-06T16:00:00Z", "cohort": "nl-amsterdam"},
+          {"email": "demo6@example.com", "joinedAt": "2026-04-07T08:55:00Z", "cohort": "nl-amsterdam"},
+          {"email": "demo7@example.com", "joinedAt": "2026-04-08T12:20:00Z", "cohort": "nl-amsterdam"},
+          {"email": "demo8@example.com", "joinedAt": "2026-04-09T19:45:00Z", "cohort": "nl-amsterdam"},
+          {"email": "demo9@example.com", "joinedAt": "2026-04-10T07:10:00Z", "cohort": "nl-amsterdam"}
+        ],
+        count: 9
+      };
+    }
+  }
+
+  function groupByDay(emails) {
+    const days = {};
+    emails.forEach(e => {
+      const day = e.joinedAt.split('T')[0];
+      days[day] = (days[day] || 0) + 1;
+    });
+    return days;
+  }
+
+  function groupByCohort(emails) {
+    const cohorts = {};
+    emails.forEach(e => {
+      const c = e.cohort || 'unknown';
+      cohorts[c] = (cohorts[c] || 0) + 1;
+    });
+    return cohorts;
+  }
+
+  const COHORT_COLORS = {
+    'early': '#f59e0b',
+    'nl-amsterdam': '#7c6af7',
+    'unknown': '#6b7280'
+  };
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString('en-NL', {
+      month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  async function render() {
+    const data = await loadData();
+    const emails = data.emails || [];
+    const total = emails.length;
+
+    // Sort by date
+    const sorted = [...emails].sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
+
+    // Stats
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = emails.filter(e => e.joinedAt.startsWith(today)).length;
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const yesterdayCount = emails.filter(e => e.joinedAt.startsWith(yesterday)).length;
+
+    const statsGrid = document.getElementById('stats-grid');
+    statsGrid.innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Total Signups</div>
+        <div class="stat-value">${total}</div>
+        <div class="stat-sub">all time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today</div>
+        <div class="stat-value">${todayCount}</div>
+        <div class="stat-sub">${yesterdayCount} yesterday</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cohorts</div>
+        <div class="stat-value">${Object.keys(groupByCohort(emails)).length}</div>
+        <div class="stat-sub">active segments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Latest</div>
+        <div class="stat-value" style="font-size:18px">${sorted[0] ? formatDate(sorted[0].joinedAt) : '—'}</div>
+        <div class="stat-sub">most recent signup</div>
+      </div>
+    `;
+
+    // Bar chart by day
+    const byDay = groupByDay(emails);
+    const days = Object.keys(byDay).sort();
+    const maxVal = Math.max(...Object.values(byDay), 1);
+
+    const chartBars = document.getElementById('chart-bars');
+    chartBars.innerHTML = days.map(day => {
+      const count = byDay[day];
+      const pct = (count / maxVal) * 100;
+      const label = day.slice(5); // MM-DD
+      return `
+        <div class="bar-wrap">
+          <div class="bar-count">${count}</div>
+          <div class="bar" style="height: ${Math.max(pct, 3)}%"></div>
+          <div class="bar-label">${label}</div>
+        </div>
+      `;
+    }).join('');
+
+    // Cohort breakdown
+    const byCohort = groupByCohort(emails);
+    const cohortGrid = document.getElementById('cohort-grid');
+    cohortGrid.innerHTML = `<div class="section-title" style="grid-column:1/-1">Cohort Breakdown</div>` +
+      Object.entries(byCohort).map(([cohort, count]) => {
+        const pct = Math.round((count / total) * 100);
+        const color = COHORT_COLORS[cohort] || '#6b7280';
+        return `
+          <div class="cohort-card">
+            <div class="cohort-dot" style="background:${color}"></div>
+            <div class="cohort-info">
+              <div class="cohort-name">${cohort}</div>
+              <div class="cohort-count">${count} signups</div>
+            </div>
+            <div class="cohort-pct">${pct}%</div>
+          </div>
+        `;
+      }).join('');
+
+    // Latest entries table
+    const tbody = document.getElementById('entries-body');
+    tbody.innerHTML = sorted.slice(0, 20).map((entry, i) => {
+      const cohort = entry.cohort || 'unknown';
+      const pillClass = `pill-${cohort.replace(/[^a-z0-9]/g, '-')}`;
+      const maskedEmail = entry.email.replace(/(.{2}).+(@.+)/, '$1***$2');
+      return `
+        <tr>
+          <td style="color:#555">${total - i}</td>
+          <td class="email-display">${maskedEmail}</td>
+          <td><span class="cohort-pill ${pillClass}">${cohort}</span></td>
+          <td style="color:#777">${formatDate(entry.joinedAt)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('last-updated').textContent = 
+      `Last updated: ${new Date().toLocaleString('en-NL')}`;
+  }
+
+  render();
+  // Auto-refresh every 60 seconds
+  setInterval(render, 60000);
+</script>
+</body>
+</html>
